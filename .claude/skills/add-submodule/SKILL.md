@@ -1,11 +1,11 @@
 ---
 name: add-submodule
-description: Adds a git submodule to the harness workspace. Use when adding a new repository as a submodule, either from a local file path or remote URL. Supports optional branch/ref specification.
+description: Adds a git submodule to the harness. Use when adding a new repository as a submodule, either from a local file path or remote URL. Supports optional branch/ref specification.
 ---
 
 # Add Submodule
 
-Adds a git repository as a submodule to the harness workspace.
+Adds a git repository as a submodule to the harness.
 
 ## Parameters
 

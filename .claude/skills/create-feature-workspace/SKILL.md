@@ -1,6 +1,6 @@
 ---
 name: create-feature-workspace
-description: Creates a new git worktree with selective submodule initialization for feature development. Use when starting work on a new ticket or feature that requires isolated workspace with specific services.
+description: Creates a new git worktree with selective submodule initialization for feature development. Use when starting work on a new ticket or feature that requires isolated harness with specific services.
 ---
 
 # Create Feature Workspace
@@ -13,23 +13,23 @@ Creates a new git worktree as a sibling directory to the current harness root wi
 - **services** (required): One or more service names to initialize
 - **change_type** (optional): Branch type prefix - default: "feat"
   - Common values: feat, fix, chore, refactor, docs
-- **suffix** (optional): Additional suffix for branch name or workspace identifier
+- **suffix** (optional): Additional suffix for branch name or harness identifier
   - When ticket provided: Creates branch `<TICKET>-<change_type>/<suffix>`
-  - When no ticket: Uses suffix as workspace identifier
+  - When no ticket: Uses suffix as harness identifier
 
 ## Process
 
 1. **Validate inputs**: Check service names exist as submodules
 2. **Calculate paths**: Determine worktree path 
-   - With ticket: `../{current-harness-name}-workspace-<TICKET>`
-   - Without ticket: `../{current-harness-name}-workspace-<SUFFIX>`
+   - With ticket: `../{current-harness-name}-harness-<TICKET>`
+   - Without ticket: `../{current-harness-name}-harness-<SUFFIX>`
    - Example: If current directory is "ai-microservice-harness-cli":
-     - With ticket: "../ai-microservice-harness-cli-workspace-Jira-123"
-     - Without ticket: "../ai-microservice-harness-cli-workspace-api-refactor"
-3. **Create worktree**: Use `git worktree add` to create new workspace
+     - With ticket: "../ai-microservice-harness-cli-harness-Jira-123"
+     - Without ticket: "../ai-microservice-harness-cli-harness-api-refactor"
+3. **Create worktree**: Use `git worktree add` to create new harness
 4. **Initialize submodules**: Only initialize specified services, leaving others empty
 5. **Create feature branches**: In each submodule, create branch from configured/default branch
-6. **Generate documentation**: Create WORKSPACE_SCOPE.md with workspace details
+6. **Generate documentation**: Create WORKSPACE_SCOPE.md with harness details
 
 ## Branch Naming
 
@@ -37,12 +37,12 @@ Creates a new git worktree as a sibling directory to the current harness root wi
 - **With ticket and suffix**: `<TICKET>-<change_type>/<suffix>` (e.g., `Jira-789-feat/api-refactor`)
 - **Without ticket, with suffix**: `<suffix>` (e.g., `api-refactor`)
 
-## Workspace Structure
+## Harness Structure
 
 ```
-../{current-harness-name}-workspace-<IDENTIFIER>/
-├── WORKSPACE_SCOPE.md          # Generated workspace documentation
-├── .gitmodules                 # Copied from parent workspace
+../{current-harness-name}-harness-<IDENTIFIER>/
+├── WORKSPACE_SCOPE.md          # Generated harness documentation
+├── .gitmodules                 # Copied from parent harness
 ├── service1/                   # Initialized with feature branch
 ├── service2/                   # Initialized with feature branch
 ├── other-service/              # Empty (not initialized)
@@ -53,24 +53,24 @@ Where <IDENTIFIER> is either the ticket ID or suffix if no ticket is provided.
 
 ## Usage Examples
 
-**Basic feature workspace with ticket:**
+**Basic feature harness with ticket:**
 ```
-Create feature workspace for Jira-123 with rgl-node-sync-api and rgl-node-etl-document-delta-app services
+Create feature harness for Jira-123 with rgl-node-sync-api and rgl-node-etl-document-delta-app services
 ```
 
 **Fix with specific change type:**
 ```
-Create feature workspace for Jira-456 with change_type 'fix' for rgl-node-sync-api service
+Create feature harness for Jira-456 with change_type 'fix' for rgl-node-sync-api service
 ```
 
 **Feature with suffix and ticket:**
 ```
-Create feature workspace for Jira-789 with change_type 'feat', suffix 'api-refactor', for rgl-node-sync-api service
+Create feature harness for Jira-789 with change_type 'feat', suffix 'api-refactor', for rgl-node-sync-api service
 ```
 
-**Workspace without ticket (using suffix as identifier):**
+**Harness without ticket (using suffix as identifier):**
 ```
-Create feature workspace with suffix 'experiment' and rgl-node-sync-api service
+Create feature harness with suffix 'experiment' and rgl-node-sync-api service
 ```
 
 ## Generated WORKSPACE_SCOPE.md
@@ -130,28 +130,28 @@ The skill executes `.claude/skills/create-feature-workspace/scripts/new-feature-
 ./.claude/skills/create-feature-workspace/scripts/new-feature-workspace.sh --help
 ```
 
-The script handles color output, error validation, worktree creation, submodule initialization, branch creation, and workspace documentation generation.
+The script handles color output, error validation, worktree creation, submodule initialization, branch creation, and harness documentation generation.
 
 ## Cleanup
 
-To remove a created workspace, use the `cleanup-feature-workspace` skill:
+To remove a created harness, use the `cleanup-feature-workspace` skill:
 
 ```
-Cleanup workspace <IDENTIFIER>
+Cleanup harness <IDENTIFIER>
 ```
 
-The cleanup skill will safely remove the workspace directory and associated git branch with proper confirmation prompts.
+The cleanup skill will safely remove the harness directory and associated git branch with proper confirmation prompts.
 
 **Examples**:
 ```
-Cleanup workspace Jira-123
-Cleanup workspace experiment
+Cleanup harness Jira-123
+Cleanup harness experiment
 ```
 
 
 ## Next Steps After Creation
 
-1. `cd ../{current-harness-name}-workspace-<IDENTIFIER>`
+1. `cd ../{current-harness-name}-harness-<IDENTIFIER>`
 2. Open in IDE (if available)
 3. Update WORKSPACE_SCOPE.md with feature details
 4. Begin development work

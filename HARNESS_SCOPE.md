@@ -1,8 +1,8 @@
 # Harness Scope
 
-This document defines the current scope and goals for this harness workspace.
+This document defines the current scope and goals for this harness.
 
-## Current Workspace
+## Current Harness
 
 **Status**: [REPLACE ME]
 **Goal**: [REPLACE ME]

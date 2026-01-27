@@ -28,7 +28,7 @@ harness-repo/
 │   ├── new-harness-worktree.sh
 │   └── new-submodule-branch.sh
 ├── CLAUDE.md           # AI tooling configuration
-├── HARNESS_SCOPE.md    # Current workspace scope and goals
+├── HARNESS_SCOPE.md    # Current harness scope and goals
 ├── INITIALIZE_REPO.md  # Repository initialization guide
 ├── README.md
 └── .gitmodules
@@ -36,7 +36,7 @@ harness-repo/
 
 ## Getting Started
 
-See [HARNESS_SCOPE.md](./HARNESS_SCOPE.md) for the current workspace configuration and goals.
+See [HARNESS_SCOPE.md](./HARNESS_SCOPE.md) for the current harness configuration and goals.
 
 ## Skills
 

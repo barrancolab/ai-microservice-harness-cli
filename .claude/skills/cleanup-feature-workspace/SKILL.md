@@ -1,19 +1,19 @@
 ---
 name: cleanup-feature-workspace
-description: Removes a feature workspace created by the create-feature-workspace skill. Use when you need to clean up workspaces that are no longer needed.
+description: Removes a feature harness created by the create-feature-workspace skill. Use when you need to clean up harnesses that are no longer needed.
 ---
 
-# Cleanup Feature Workspace
+# Cleanup Feature Harness
 
-Safely removes a feature workspace created by the `create-feature-workspace` skill, including both the worktree directory and associated git branch.
+Safely removes a feature harness created by the `create-feature-workspace` skill, including both the worktree directory and associated git branch.
 
 ## Parameters
 
-- **identifier** (required): Workspace identifier (ticket ID or suffix used when creating the workspace)
+- **identifier** (required): Harness identifier (ticket ID or suffix used when creating the harness)
 
 ## Process
 
-1. **Validate identifier**: Check that workspace exists
+1. **Validate identifier**: Check that harness exists
 2. **Confirm deletion**: Show what will be removed and require user confirmation
 3. **Remove worktree**: Use `git worktree remove` to safely remove the worktree
 4. **Remove branch**: Delete the associated git branch if it exists
@@ -21,55 +21,55 @@ Safely removes a feature workspace created by the `create-feature-workspace` ski
 
 ## Usage Examples
 
-**Remove workspace for a ticket:**
+**Remove harness for a ticket:**
 ```
-Cleanup workspace Jira-123
-```
-
-**Remove workspace created with suffix:**
-```
-Cleanup workspace experiment
+Cleanup harness Jira-123
 ```
 
-**Remove workspace with complex identifier:**
+**Remove harness created with suffix:**
 ```
-Cleanup workspace api-migration-phase-1
+Cleanup harness experiment
+```
+
+**Remove harness with complex identifier:**
+```
+Cleanup harness api-migration-phase-1
 ```
 
 ## Script Execution
 
-The skill executes `.claude/skills/cleanup-feature-workspace/scripts/cleanup-workspace.sh` with the workspace identifier.
+The skill executes `.claude/skills/cleanup-feature-workspace/scripts/cleanup-workspace.sh` with the harness identifier.
 
 ## Safety Features
 
 - **Confirmation prompt**: Requires explicit user confirmation before deletion
-- **Validation**: Checks workspace exists before attempting removal
+- **Validation**: Checks harness exists before attempting removal
 - **Git safety**: Uses proper git worktree removal to avoid repository corruption
 - **Clear feedback**: Shows exactly what will be removed before confirming
 
 ## What Gets Removed
 
-1. **Worktree directory**: The workspace directory (e.g., `../{harness-name}-workspace-{identifier}/`)
+1. **Worktree directory**: The harness directory (e.g., `../{harness-name}-harness-{identifier}/`)
 2. **Git branch**: The worktree branch (e.g., `{identifier}-workspace`)
-3. **All workspace contents**: Including generated documentation and any local changes
+3. **All harness contents**: Including generated documentation and any local changes
 
 ## Important Notes
 
-- **Run from main workspace**: Execute this skill from your main harness workspace, not from the workspace being removed
+- **Run from main harness**: Execute this skill from your main harness, not from the harness being removed
 - **Backup important changes**: Ensure any work you want to keep is pushed or backed up before cleanup
-- **Irreversible**: Cleanup permanently removes the workspace and branch
-- **Only removes workspaces**: Will not affect other directories or branches
+- **Irreversible**: Cleanup permanently removes the harness and branch
+- **Only removes harnesses**: Will not affect other directories or branches
 
 ## Error Handling
 
 - Validates identifier is provided
-- Checks workspace exists before attempting removal
-- Provides clear error messages if workspace not found
+- Checks harness exists before attempting removal
+- Provides clear error messages if harness not found
 - Handles git operation failures gracefully
 
-## Examples of Workspace Identifiers
+## Examples of Harness Identifiers
 
-The identifier should match what was used when creating the workspace:
+The identifier should match what was used when creating the harness:
 
 | Creation Command | Identifier for Cleanup |
 |------------------|------------------------|
@@ -79,5 +79,5 @@ The identifier should match what was used when creating the workspace:
 
 ## Related Skills
 
-- **create-feature-workspace**: Creates new feature workspaces
-- **cleanup-feature-workspace**: Removes feature workspaces (this skill)
+- **create-feature-workspace**: Creates new feature harnesses
+- **cleanup-feature-workspace**: Removes feature harnesses (this skill)

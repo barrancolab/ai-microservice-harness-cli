@@ -99,7 +99,7 @@ if [ -z "$TICKET" ] && [ -z "$SUFFIX" ]; then
     exit 1
 fi
 
-# Construct workspace identifier and branch name
+# Construct harness identifier and branch name
 if [ -n "$TICKET" ]; then
     WORKSPACE_IDENTIFIER="${TICKET}"
     if [ -n "$SUFFIX" ]; then
@@ -108,7 +108,7 @@ if [ -n "$TICKET" ]; then
         BRANCH_NAME="${TICKET}-${CHANGE_TYPE}"
     fi
 else
-    # No ticket, use suffix as both workspace identifier and branch name
+    # No ticket, use suffix as both harness identifier and branch name
     WORKSPACE_IDENTIFIER="${SUFFIX}"
     BRANCH_NAME="${SUFFIX}"
 fi
@@ -116,7 +116,7 @@ fi
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 WORKSPACE_ROOT="$(dirname "$SCRIPT_DIR")"
 HARNESS_NAME="$(basename "$WORKSPACE_ROOT")"
-WORKTREE_PATH="$(dirname "$WORKSPACE_ROOT")/${HARNESS_NAME}-workspace-${WORKSPACE_IDENTIFIER}"
+WORKTREE_PATH="$(dirname "$WORKSPACE_ROOT")/${HARNESS_NAME}-harness-${WORKSPACE_IDENTIFIER}"
 
 # Check if worktree already exists
 if [ -d "$WORKTREE_PATH" ]; then
@@ -183,7 +183,7 @@ done
 # Generate WORKSPACE_SCOPE.md
 cd "$WORKTREE_PATH"
 cat > WORKSPACE_SCOPE.md << EOF
-# Workspace: ${WORKSPACE_IDENTIFIER}
+# Harness: ${WORKSPACE_IDENTIFIER}
 
 Created: $(date '+%Y-%m-%d %H:%M:%S')
 
@@ -209,7 +209,7 @@ done)
 
 ## Purpose
 
-<!-- Describe the feature/change being implemented in this workspace -->
+<!-- Describe the feature/change being implemented in this harness -->
 
 ## Related Links
 
@@ -224,14 +224,14 @@ cat >> WORKSPACE_SCOPE.md << EOF
 
 ## Notes
 
-- Only the services listed above are initialized in this workspace
+- Only the services listed above are initialized in this harness
 - Other service directories exist but are empty
 - Do not attempt to modify uninitialized services
 EOF
 
 echo ""
 echo -e "${GREEN}========================================${NC}"
-echo -e "${GREEN}Workspace created successfully!${NC}"
+echo -e "${GREEN}Harness created successfully!${NC}"
 echo -e "${GREEN}========================================${NC}"
 echo ""
 echo "Location: ${WORKTREE_PATH}"
