@@ -18,7 +18,7 @@ Adds a git repository as a submodule to the harness.
 2. **Determine submodule name**: Extract repository name from the path/URL
 3. **Add to .gitmodules**: Update the .gitmodules file with the new submodule configuration
 4. **Initialize submodule**: Run git submodule add with the specified ref
-5. **Update and initialize**: Run git submodule update --init to initialize the new submodule
+5. **Optionally Update and initialize**: Upon completion, ask the user if you should run git submodule update --init to initialize the new submodule
 
 ## Usage Examples
 
