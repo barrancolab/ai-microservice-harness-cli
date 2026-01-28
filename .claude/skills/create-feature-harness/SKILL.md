@@ -1,9 +1,9 @@
 ---
-name: create-feature-workspace
+name: create-feature-harness
 description: Creates a new git worktree with selective submodule initialization for feature development. Use when starting work on a new ticket or feature that requires isolated harness with specific services.
 ---
 
-# Create Feature Workspace
+# Create Feature Harness
 
 Creates a new git worktree as a sibling directory to the current harness root with selective submodule initialization for feature development.
 
@@ -114,27 +114,27 @@ Lists all available submodules using `git submodule status` and validates each r
 
 ### Script Usage
 
-The skill executes `.claude/skills/create-feature-workspace/scripts/new-feature-workspace.sh` with the parsed parameters:
+The skill executes `.claude/skills/create-feature-harness/scripts/new-feature-harness.sh` with the parsed parameters:
 
 ```bash
 # Basic usage with ticket
-./.claude/skills/create-feature-workspace/scripts/new-feature-workspace.sh Jira-123 service1 service2
+./.claude/skills/create-feature-harness/scripts/new-feature-harness.sh Jira-123 service1 service2
 
 # With change type and suffix
-./.claude/skills/create-feature-workspace/scripts/new-feature-workspace.sh Jira-456 --change-type fix --suffix bug-fix service1
+./.claude/skills/create-feature-harness/scripts/new-feature-harness.sh Jira-456 --change-type fix --suffix bug-fix service1
 
 # Without ticket, using suffix as identifier
-./.claude/skills/create-feature-workspace/scripts/new-feature-workspace.sh --suffix experiment service1 service2
+./.claude/skills/create-feature-harness/scripts/new-feature-harness.sh --suffix experiment service1 service2
 
 # Show help
-./.claude/skills/create-feature-workspace/scripts/new-feature-workspace.sh --help
+./.claude/skills/create-feature-harness/scripts/new-feature-harness.sh --help
 ```
 
 The script handles color output, error validation, worktree creation, submodule initialization, branch creation, and harness documentation generation.
 
 ## Cleanup
 
-To remove a created harness, use the `cleanup-feature-workspace` skill:
+To remove a created harness, use the `cleanup-feature-harness` skill:
 
 ```
 Cleanup harness <IDENTIFIER>

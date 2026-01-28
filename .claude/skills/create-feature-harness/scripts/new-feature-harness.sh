@@ -1,11 +1,11 @@
 #!/bin/bash
-# new-feature-workspace.sh
+# new-feature-harness.sh
 # Creates a new git worktree with selective submodule initialization for feature development.
 #
-# Usage: ./scripts/new-feature-workspace.sh <TICKET> [--change-type <type>] [--suffix <suffix>] <service1> [service2] ...
-# Example: ./scripts/new-feature-workspace.sh Jira-123 rgl-node-sync-api rgl-node-etl-document-delta-app
-# Example: ./scripts/new-feature-workspace.sh Jira-456 --change-type fix rgl-node-sync-api
-# Example: ./scripts/new-feature-workspace.sh Jira-789 --change-type feat --suffix api-refactor rgl-node-sync-api
+# Usage: ./scripts/new-feature-harness.sh <TICKET> [--change-type <type>] [--suffix <suffix>] [--purpose <purpose>] <service1> [service2] ...
+# Example: ./scripts/new-feature-harness.sh Jira-123 rgl-node-sync-api rgl-node-etl-document-delta-app
+# Example: ./scripts/new-feature-harness.sh Jira-456 --change-type fix rgl-node-sync-api
+# Example: ./scripts/new-feature-harness.sh Jira-789 --change-type feat --suffix api-refactor --purpose "Refactor API endpoints" rgl-node-sync-api
 
 set -e
 
@@ -19,10 +19,11 @@ NC='\033[0m' # No Color
 CHANGE_TYPE="feat"
 SUFFIX=""
 TICKET=""
+PURPOSE=""
 
 # Function to display usage
 show_usage() {
-    echo "Usage: $0 [TICKET] [--change-type <type>] [--suffix <suffix>] <service1> [service2] ..."
+    echo "Usage: $0 [TICKET] [--change-type <type>] [--suffix <suffix>] [--purpose <purpose>] <service1> [service2] ..."
     echo ""
     echo "Arguments:"
     echo "  TICKET                  (optional) Jira ticket ID (e.g., Jira-123)"
@@ -33,6 +34,7 @@ show_usage() {
     echo "                          Common values: feat, fix, chore, refactor, docs"
     echo "  --suffix <suffix>       Required if no ticket provided"
     echo "                          Creates branch: <TICKET>-<change_type>/<suffix> or <suffix>"
+    echo "  --purpose <purpose>     Purpose description for the feature/change"
     echo ""
     echo "Available services:"
     git submodule status | awk '{print "  " $2}'
@@ -64,12 +66,20 @@ while [ $# -gt 0 ]; do
             CHANGE_TYPE="$2"
             shift 2
             ;;
-        --suffix)
+         --suffix)
             if [ -z "$2" ] || [[ "$2" == --* ]]; then
                 echo -e "${RED}Error: --suffix requires a value${NC}"
                 exit 1
             fi
             SUFFIX="$2"
+            shift 2
+            ;;
+         --purpose)
+            if [ -z "$2" ] || [[ "$2" == --* ]]; then
+                echo -e "${RED}Error: --purpose requires a value${NC}"
+                exit 1
+            fi
+            PURPOSE="$2"
             shift 2
             ;;
         --help|-h)
@@ -180,9 +190,9 @@ for service in "${SERVICES[@]}"; do
     echo "    Created and pushed branch: ${BRANCH_NAME}"
 done
 
-# Generate WORKSPACE_SCOPE.md
+# Generate HARNESS_SCOPE.md
 cd "$WORKTREE_PATH"
-cat > WORKSPACE_SCOPE.md << EOF
+cat > HARNESS_SCOPE.md << EOF
 # Harness: ${WORKSPACE_IDENTIFIER}
 
 Created: $(date '+%Y-%m-%d %H:%M:%S')
@@ -209,7 +219,16 @@ done)
 
 ## Purpose
 
-<!-- Describe the feature/change being implemented in this harness -->
+EOF
+
+# Add purpose if provided, otherwise use placeholder
+if [ -n "$PURPOSE" ]; then
+    echo "${PURPOSE}" >> HARNESS_SCOPE.md
+else
+    echo "<!-- Describe the feature/change being implemented in this harness -->" >> HARNESS_SCOPE.md
+fi
+
+cat >> HARNESS_SCOPE.md << EOF
 
 ## Related Links
 
@@ -217,10 +236,10 @@ EOF
 
 # Add Jira link only if ticket is provided
 if [ -n "$TICKET" ]; then
-    echo "- Jira: https://radiantdelivers.atlassian.net/browse/${TICKET}" >> WORKSPACE_SCOPE.md
+    echo "- Jira: https://radiantdelivers.atlassian.net/browse/${TICKET}" >> HARNESS_SCOPE.md
 fi
 
-cat >> WORKSPACE_SCOPE.md << EOF
+cat >> HARNESS_SCOPE.md << EOF
 
 ## Notes
 
@@ -244,5 +263,5 @@ echo ""
 echo "Next steps:"
 echo "  1. cd ${WORKTREE_PATH}"
 echo "  2. Open in IDE (if available)"
-echo "  3. Update WORKSPACE_SCOPE.md with feature details"
+echo "  3. Update HARNESS_SCOPE.md with feature details"
 echo ""
