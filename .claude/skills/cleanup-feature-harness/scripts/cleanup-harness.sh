@@ -1,6 +1,6 @@
 #!/bin/bash
-# cleanup-workspace.sh
-# Removes a feature harness created by the create-feature-workspace skill
+# cleanup-harness.sh
+# Removes a feature harness created by the create-feature-harness skill
 
 set -e
 
