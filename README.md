@@ -34,6 +34,35 @@ harness-repo/
 └── .gitmodules
 ```
 
+## How to use this repository
+
+### 1. Set up your harness repository
+- Fork this repository or create your own harness repository using this repo as a template
+- Clone your new harness repository locally
+
+### 2. Add microservice repositories
+- Use the "add-submodule" skill to add your microservice repo to the `submodules/` folder
+- Or, run the required git commands to add the submodule to the `submodules/` directory
+- Repeat this process for each microservice you want to include
+- Commit the submodules and `.gitmodules` file to your version control
+
+### 3. Create a new feature harness
+- When ready to work on a new feature, use the "new-harness" skill
+- Provide a JIRA issue ID or short description of the change
+- More detail is better! If you can provide a clear and conscise PRD, do it! It will automatically be inserted into the new harness's `HARNESS_SCOPE.md` file.
+- The harness will be automatically named based on your inputs
+- The new harness is automatically created at the same directory level as your locally cloned "clean" repository. Try creating a new harness with this repo!
+
+### 4. Start development
+- Change directories to the new harness location or open it in your editor
+- The `CLAUDE.md` file will reference the `HARNESS_SCOPE.md` file
+- Begin implementing the feature outlined in the harness scope specifications
+- Each submodule will have a feature branch created during harness creation, allowing individual pull requests per repository
+
+### 5. Clean up when complete
+- Return to the "clean" harness directory
+- Use the "clean-harness" skill to remove all data related to that feature work
+
 ## Getting Started
 
 See [HARNESS_SCOPE.md](./HARNESS_SCOPE.md) for the current harness configuration and goals.
