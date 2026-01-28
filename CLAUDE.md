@@ -9,9 +9,6 @@ Import the current harness scope and available skills:
 ```markdown
 <!-- Import harness scope -->
 ./HARNESS_SCOPE.md
-
-<!-- Import available skills -->
-./claude-skills.md
 ```
 
 ## Available Directories
