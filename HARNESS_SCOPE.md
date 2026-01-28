@@ -4,8 +4,8 @@ This document defines the current scope and goals for this harness.
 
 ## Current Harness
 
-**Status**: [REPLACE ME]
-**Goal**: [REPLACE ME]
+**Status**: Clean Workspace
+**Goal**: Use skills in ./.claude/skills to generate new feature/change harnesses
 
 ## Active Submodules
 
