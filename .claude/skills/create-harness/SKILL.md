@@ -16,6 +16,11 @@ Creates a new git worktree as a sibling directory to the current harness root wi
 - **suffix** (optional): Additional suffix for branch name or harness identifier
   - When ticket provided: Creates branch `<TICKET>-<change_type>/<suffix>`
   - When no ticket: Uses suffix as harness identifier
+- **purpose** (optional): Description for the feature/change being implemented
+- **status** (optional): Current harness status (default: "Feature Development")
+- **goal** (optional): Current harness goal (default: "Use skills in ./.claude/skills to generate new feature/change harnesses")
+- **solution_patterns** (optional): Comma-separated solution patterns for the harness
+- **implementation_patterns** (optional): Comma-separated implementation patterns for the harness
 
 ## Process
 
@@ -55,6 +60,11 @@ Create harness for Jira-456 with change_type 'fix' for rgl-node-sync-api service
 Create harness for Jira-789 with change_type 'feat', suffix 'api-refactor', for rgl-node-sync-api service
 ```
 
+**Feature with full context:**
+```
+Create harness for Jira-999 with status 'API Development', goal 'Implement new user authentication endpoints', solution_patterns 'JWT pattern, Database pattern', implementation_patterns 'Repository pattern, Service layer pattern', for rgl-node-sync-api service
+```
+
 **Harness without ticket (using suffix as identifier):**
 ```
 Create harness with suffix 'experiment' and rgl-node-sync-api service
@@ -62,14 +72,14 @@ Create harness with suffix 'experiment' and rgl-node-sync-api service
 
 ## Generated HARNESS_SCOPE.md
 
-The skill automatically generates a HARNESS_SCOPE.md file containing:
+The skill automatically generates a HARNESS_SCOPE.md file that matches the main harness format, containing:
 
-- Creation timestamp
-- List of active services
-- Branch information table (Service | Branch | Base)
-- Purpose section (to be filled by user)
-- Related Jira link
-- Usage notes
+- **Current Harness section**: Status and Goal
+- **Active Submodules section**: List of initialized services with branch info
+- **Solution Patterns in Scope section**: Available solution patterns
+- **Common Implementation Patterns section**: Available implementation patterns  
+- **Session Goals section**: Uses the purpose parameter
+- **Notes section**: Creation timestamp and harness metadata
 
 ## Error Handling
 
@@ -112,6 +122,17 @@ The skill executes `.claude/skills/create-harness/scripts/new-harness.sh` with t
 
 # Without ticket, using suffix as identifier
 ./.claude/skills/create-harness/scripts/new-harness.sh --suffix experiment service1 service2
+
+# With full context (example for AI agents)
+./.claude/skills/create-harness/scripts/new-harness.sh Jira-999 \
+  --change-type feat \
+  --suffix auth-endpoints \
+  --purpose "Implement new user authentication endpoints" \
+  --status "API Development" \
+  --goal "Implement new user authentication endpoints" \
+  --solution-patterns "JWT pattern, Database pattern" \
+  --implementation-patterns "Repository pattern, Service layer pattern" \
+  rgl-node-sync-api
 
 # Show help
 ./.claude/skills/create-harness/scripts/new-harness.sh --help

@@ -2,10 +2,10 @@
 # new-harness.sh
 # Creates a new git worktree with selective submodule initialization for feature development.
 #
-# Usage: ./scripts/new-harness.sh <TICKET> [--change-type <type>] [--suffix <suffix>] [--purpose <purpose>] <service1> [service2] ...
+# Usage: ./scripts/new-harness.sh <TICKET> [--change-type <type>] [--suffix <suffix>] [--purpose <purpose>] [--status <status>] [--goal <goal>] [--solution-patterns <patterns>] [--implementation-patterns <patterns>] <service1> [service2] ...
 # Example: ./scripts/new-harness.sh Jira-123 rgl-node-sync-api rgl-node-etl-document-delta-app
 # Example: ./scripts/new-harness.sh Jira-456 --change-type fix rgl-node-sync-api
-# Example: ./scripts/new-harness.sh Jira-789 --change-type feat --suffix api-refactor --purpose "Refactor API endpoints" rgl-node-sync-api
+# Example: ./scripts/new-harness.sh Jira-789 --change-type feat --suffix api-refactor --purpose "Refactor API endpoints" --status "Feature Development" --goal "Implement new API endpoints" --solution-patterns "API pattern, Database pattern" rgl-node-sync-api
 
 set -e
 
@@ -20,10 +20,14 @@ CHANGE_TYPE="feat"
 SUFFIX=""
 TICKET=""
 PURPOSE=""
+STATUS="Feature Development"
+GOAL=""
+SOLUTION_PATTERNS=""
+IMPLEMENTATION_PATTERNS=""
 
 # Function to display usage
 show_usage() {
-    echo "Usage: $0 [TICKET] [--change-type <type>] [--suffix <suffix>] [--purpose <purpose>] <service1> [service2] ..."
+    echo "Usage: $0 [TICKET] [--change-type <type>] [--suffix <suffix>] [--purpose <purpose>] [--status <status>] [--goal <goal>] [--solution-patterns <patterns>] [--implementation-patterns <patterns>] <service1> [service2] ..."
     echo ""
     echo "Arguments:"
     echo "  TICKET                  (optional) Jira ticket ID (e.g., Jira-123)"
@@ -35,6 +39,10 @@ show_usage() {
     echo "  --suffix <suffix>       Required if no ticket provided"
     echo "                          Creates branch: <TICKET>-<change_type>/<suffix> or <suffix>"
     echo "  --purpose <purpose>     Purpose description for the feature/change"
+    echo "  --status <status>       Current harness status (default: Feature Development)"
+    echo "  --goal <goal>           Current harness goal"
+    echo "  --solution-patterns <patterns>  Comma-separated solution patterns"
+    echo "  --implementation-patterns <patterns>  Comma-separated implementation patterns"
     echo ""
     echo "Available services:"
     cd "$GIT_ROOT" && git submodule status | awk '{print "  " $2}'
@@ -80,6 +88,38 @@ while [ $# -gt 0 ]; do
                 exit 1
             fi
             PURPOSE="$2"
+            shift 2
+            ;;
+         --status)
+            if [ -z "$2" ] || [[ "$2" == --* ]]; then
+                echo -e "${RED}Error: --status requires a value${NC}"
+                exit 1
+            fi
+            STATUS="$2"
+            shift 2
+            ;;
+         --goal)
+            if [ -z "$2" ] || [[ "$2" == --* ]]; then
+                echo -e "${RED}Error: --goal requires a value${NC}"
+                exit 1
+            fi
+            GOAL="$2"
+            shift 2
+            ;;
+         --solution-patterns)
+            if [ -z "$2" ] || [[ "$2" == --* ]]; then
+                echo -e "${RED}Error: --solution-patterns requires a value${NC}"
+                exit 1
+            fi
+            SOLUTION_PATTERNS="$2"
+            shift 2
+            ;;
+         --implementation-patterns)
+            if [ -z "$2" ] || [[ "$2" == --* ]]; then
+                echo -e "${RED}Error: --implementation-patterns requires a value${NC}"
+                exit 1
+            fi
+            IMPLEMENTATION_PATTERNS="$2"
             shift 2
             ;;
         --help|-h)
@@ -208,31 +248,50 @@ done
 # Generate HARNESS_SCOPE.md
 cd "$WORKTREE_PATH"
 cat > HARNESS_SCOPE.md << EOF
-# Harness: ${WORKSPACE_IDENTIFIER}
+# Harness Scope
 
-Created: $(date '+%Y-%m-%d %H:%M:%S')
+This document defines the current scope and goals for this harness.
 
-## Active Services
+## Current Harness
 
-$(for service in "${SERVICES[@]}"; do echo "- ${service}"; done)
+**Status**: ${STATUS:-Feature Development}
+**Goal**: ${GOAL:-Use skills in ./.claude/skills to generate new feature/change harnesses}
 
-## Branch Information
+## Active Submodules
 
-| Service | Branch | Base |
-|---------|--------|------|
-$(for service in "${SERVICES[@]}"; do
-    cd "$WORKTREE_PATH/$service"
-    # Get the configured branch from .gitmodules, fallback to default branch
-    CONFIGURED_BRANCH=$(git config -f "$WORKTREE_PATH/.gitmodules" submodule."$service".branch 2>/dev/null)
-    if [ -n "$CONFIGURED_BRANCH" ]; then
-        BASE_BRANCH="$CONFIGURED_BRANCH"
-    else
-        BASE_BRANCH=$(git remote show origin 2>/dev/null | grep 'HEAD branch' | awk '{print $NF}')
-    fi
-    echo "| ${service} | ${BRANCH_NAME} | ${BASE_BRANCH} |"
-done)
+$(for service in "${SERVICES[@]}"; do echo "- ${service} (branch: ${BRANCH_NAME})"; done)
 
-## Purpose
+## Solution Patterns in Scope
+
+EOF
+
+# Add solution patterns if provided, otherwise use placeholder
+if [ -n "$SOLUTION_PATTERNS" ]; then
+    IFS=',' read -ra PATTERNS <<< "$SOLUTION_PATTERNS"
+    for pattern in "${PATTERNS[@]}"; do
+        echo "- ${pattern}" | sed 's/^[[:space:]]*//' >> HARNESS_SCOPE.md
+    done
+else
+    echo "None currently active." >> HARNESS_SCOPE.md
+fi
+
+cat >> HARNESS_SCOPE.md << EOF
+
+## Common Implementation Patterns
+
+EOF
+
+# Add implementation patterns if provided, otherwise leave empty
+if [ -n "$IMPLEMENTATION_PATTERNS" ]; then
+    IFS=',' read -ra PATTERNS <<< "$IMPLEMENTATION_PATTERNS"
+    for pattern in "${PATTERNS[@]}"; do
+        echo "- ${pattern}" | sed 's/^[[:space:]]*//' >> HARNESS_SCOPE.md
+    done
+fi
+
+cat >> HARNESS_SCOPE.md << EOF
+
+## Session Goals
 
 EOF
 
@@ -240,14 +299,8 @@ EOF
 if [ -n "$PURPOSE" ]; then
     echo "${PURPOSE}" >> HARNESS_SCOPE.md
 else
-    echo "<!-- Describe the feature/change being implemented in this harness -->" >> HARNESS_SCOPE.md
+    echo "<!-- Add specific session goals here -->" >> HARNESS_SCOPE.md
 fi
-
-cat >> HARNESS_SCOPE.md << EOF
-
-## Related Links
-
-EOF
 
 cat >> HARNESS_SCOPE.md << EOF
 
@@ -256,6 +309,8 @@ cat >> HARNESS_SCOPE.md << EOF
 - Only the services listed above are initialized in this harness
 - Other service directories exist but are empty
 - Do not attempt to modify uninitialized services
+- Created: $(date '+%Y-%m-%d %H:%M:%S')
+- Harness identifier: ${WORKSPACE_IDENTIFIER}
 EOF
 
 echo ""
