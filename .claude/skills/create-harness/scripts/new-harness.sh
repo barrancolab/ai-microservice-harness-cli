@@ -1,11 +1,11 @@
 #!/bin/bash
-# new-feature-harness.sh
+# new-harness.sh
 # Creates a new git worktree with selective submodule initialization for feature development.
 #
-# Usage: ./scripts/new-feature-harness.sh <TICKET> [--change-type <type>] [--suffix <suffix>] [--purpose <purpose>] <service1> [service2] ...
-# Example: ./scripts/new-feature-harness.sh Jira-123 rgl-node-sync-api rgl-node-etl-document-delta-app
-# Example: ./scripts/new-feature-harness.sh Jira-456 --change-type fix rgl-node-sync-api
-# Example: ./scripts/new-feature-harness.sh Jira-789 --change-type feat --suffix api-refactor --purpose "Refactor API endpoints" rgl-node-sync-api
+# Usage: ./scripts/new-harness.sh <TICKET> [--change-type <type>] [--suffix <suffix>] [--purpose <purpose>] <service1> [service2] ...
+# Example: ./scripts/new-harness.sh Jira-123 rgl-node-sync-api rgl-node-etl-document-delta-app
+# Example: ./scripts/new-harness.sh Jira-456 --change-type fix rgl-node-sync-api
+# Example: ./scripts/new-harness.sh Jira-789 --change-type feat --suffix api-refactor --purpose "Refactor API endpoints" rgl-node-sync-api
 
 set -e
 
@@ -37,7 +37,7 @@ show_usage() {
     echo "  --purpose <purpose>     Purpose description for the feature/change"
     echo ""
     echo "Available services:"
-    git submodule status | awk '{print "  " $2}'
+    cd "$GIT_ROOT" && git submodule status | awk '{print "  " $2}'
 }
 
 # Check if first argument is a ticket or option
@@ -123,10 +123,24 @@ else
     BRANCH_NAME="${SUFFIX}"
 fi
 
+# Function to get git repository root
+get_git_root() {
+    local dir="$(cd "$(dirname "${BASH_SOURCE[1]}")" && pwd)"
+    while [[ "$dir" != "/" ]]; do
+        if [[ -d "$dir/.git" ]]; then
+            echo "$dir"
+            return 0
+        fi
+        dir="$(dirname "$dir")"
+    done
+    echo "Error: Not in a git repository" >&2
+    return 1
+}
+
+GIT_ROOT="$(get_git_root)"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-WORKSPACE_ROOT="$(dirname "$SCRIPT_DIR")"
-HARNESS_NAME="$(basename "$WORKSPACE_ROOT")"
-WORKTREE_PATH="$(dirname "$WORKSPACE_ROOT")/${HARNESS_NAME}-harness-${WORKSPACE_IDENTIFIER}"
+HARNESS_NAME="$(basename "$GIT_ROOT")"
+WORKTREE_PATH="${GIT_ROOT}-${WORKSPACE_IDENTIFIER}"
 
 # Check if worktree already exists
 if [ -d "$WORKTREE_PATH" ]; then
@@ -137,7 +151,7 @@ fi
 
 # Validate that all specified services are valid submodules
 echo -e "${YELLOW}Validating services...${NC}"
-AVAILABLE_SUBMODULES=$(git submodule status | awk '{print $2}')
+AVAILABLE_SUBMODULES=$(cd "$GIT_ROOT" && git submodule status | awk '{print $2}')
 for service in "${SERVICES[@]}"; do
     if ! echo "$AVAILABLE_SUBMODULES" | grep -q "^${service}$"; then
         echo -e "${RED}Error: '${service}' is not a valid submodule${NC}"
@@ -151,6 +165,7 @@ done
 # Create the worktree
 echo -e "${YELLOW}Creating worktree at ${WORKTREE_PATH}...${NC}"
 WORKTREE_BRANCH="${WORKSPACE_IDENTIFIER}-workspace"
+cd "$GIT_ROOT"
 git worktree add "$WORKTREE_PATH" -b "$WORKTREE_BRANCH" 2>/dev/null || {
     # Branch might already exist, try without -b
     git worktree add "$WORKTREE_PATH" "$WORKTREE_BRANCH" 2>/dev/null || {

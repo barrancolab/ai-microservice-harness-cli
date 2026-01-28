@@ -1,11 +1,11 @@
 ---
-name: cleanup-feature-harness
-description: Removes a feature harness created by the create-feature-harness skill. Use when you need to clean up harnesses that are no longer needed.
+name: cleanup-harness
+description: Removes a feature harness created by the create-harness skill. Use when you need to clean up harnesses that are no longer needed.
 ---
 
-# Cleanup Feature Harness
+# Cleanup Harness
 
-Safely removes a feature harness created by the `create-feature-harness` skill, including both the worktree directory and associated git branch.
+Safely removes a feature harness created by the `create-harness` skill, including both the worktree directory and associated git branch.
 
 ## Parameters
 
@@ -38,7 +38,7 @@ Cleanup harness api-migration-phase-1
 
 ## Script Execution
 
-The skill executes `.claude/skills/cleanup-feature-harness/scripts/cleanup-harness.sh` with the harness identifier.
+The skill executes `.claude/skills/cleanup-harness/scripts/cleanup-harness.sh` with the harness identifier.
 
 ## Safety Features
 
@@ -50,7 +50,7 @@ The skill executes `.claude/skills/cleanup-feature-harness/scripts/cleanup-harne
 ## What Gets Removed
 
 1. **Worktree directory**: The harness directory (e.g., `../{harness-name}-harness-{identifier}/`)
-2. **Git branch**: The worktree branch (e.g., `{identifier}-harness`)
+2. **Git branch**: The worktree branch (e.g., `{identifier}-workspace`)
 3. **All harness contents**: Including generated documentation and any local changes
 
 ## Important Notes
@@ -79,5 +79,5 @@ The identifier should match what was used when creating the harness:
 
 ## Related Skills
 
-- **create-feature-harness**: Creates new feature harnesses
-- **cleanup-feature-harness**: Removes feature harnesses (this skill)
+- **create-harness**: Creates new feature harnesses
+- **cleanup-harness**: Removes feature harnesses (this skill)

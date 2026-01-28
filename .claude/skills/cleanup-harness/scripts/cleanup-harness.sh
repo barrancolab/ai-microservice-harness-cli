@@ -1,6 +1,6 @@
 #!/bin/bash
 # cleanup-harness.sh
-# Removes a feature harness created by the create-feature-harness skill
+# Removes a feature harness created by the create-harness skill
 
 set -e
 
@@ -32,10 +32,23 @@ fi
 
 IDENTIFIER=$1
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-WORKSPACE_ROOT="$(dirname "$SCRIPT_DIR")"
-HARNESS_NAME="$(basename "$WORKSPACE_ROOT")"
-WORKTREE_PATH="$(dirname "$WORKSPACE_ROOT")/${HARNESS_NAME}-harness-${IDENTIFIER}"
+# Function to get git repository root
+get_git_root() {
+    local dir="$(cd "$(dirname "${BASH_SOURCE[1]}")" && pwd)"
+    while [[ "$dir" != "/" ]]; do
+        if [[ -d "$dir/.git" ]]; then
+            echo "$dir"
+            return 0
+        fi
+        dir="$(dirname "$dir")"
+    done
+    echo "Error: Not in a git repository" >&2
+    return 1
+}
+
+GIT_ROOT="$(get_git_root)"
+HARNESS_NAME="$(basename "$GIT_ROOT")"
+WORKTREE_PATH="${GIT_ROOT}-${IDENTIFIER}"
 
 # Check if worktree exists
 if [ ! -d "$WORKTREE_PATH" ]; then
@@ -57,7 +70,7 @@ fi
 
 # Remove worktree
 echo -e "${YELLOW}Removing worktree...${NC}"
-cd "$WORKSPACE_ROOT"
+cd "$GIT_ROOT"
 git worktree remove "$WORKTREE_PATH"
 
 # Remove worktree branch if it exists
