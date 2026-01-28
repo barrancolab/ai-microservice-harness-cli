@@ -15,7 +15,6 @@ Import the current harness scope and available skills:
 
 - `skills/`: AI-codable skills for harness operations
 - `solution_patterns/`: Progressive disclosure markdown for common solution patterns with the microservices in ./submodules/ directory
-- `scripts/`: Utility scripts for harness management
 - `submodules/`: Git submodules (when active) - these are the underlying codebases/repositories
 
 ## Working with Submodules

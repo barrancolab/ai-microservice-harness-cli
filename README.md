@@ -1,4 +1,4 @@
-# ai-microservice-harness-cli
+# ai-microservice-harness
 
 This project provides a set of tools targeted at making developing many interconnected microservices easier.
 
