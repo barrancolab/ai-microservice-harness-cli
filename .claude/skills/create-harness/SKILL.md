@@ -21,15 +21,15 @@ Creates a new git worktree as a sibling directory to the current harness root wi
 
 1. **Validate inputs**: Check service names exist as submodules
 2. **Calculate paths**: Determine worktree path 
-   - With ticket: `../{current-harness-name}-harness-<TICKET>`
-   - Without ticket: `../{current-harness-name}-harness-<SUFFIX>`
+   - With ticket: `../{current-harness-name}-<TICKET>`
+   - Without ticket: `../{current-harness-name}-<SUFFIX>`
    - Example: If current directory is "ai-microservice-harness-cli":
      - With ticket: "../ai-microservice-harness-cli-harness-Jira-123"
      - Without ticket: "../ai-microservice-harness-cli-harness-api-refactor"
 3. **Create worktree**: Use `git worktree add` to create new harness
 4. **Initialize submodules**: Only initialize specified services, leaving others empty
 5. **Create feature branches**: In each submodule, create branch from configured/default branch
-6. **Generate documentation**: Create WORKSPACE_SCOPE.md with harness details
+6. **Generate documentation**: Create HARNESS_SCOPE.md with harness details
 
 ## Branch Naming
 
@@ -37,19 +37,6 @@ Creates a new git worktree as a sibling directory to the current harness root wi
 - **With ticket and suffix**: `<TICKET>-<change_type>/<suffix>` (e.g., `Jira-789-feat/api-refactor`)
 - **Without ticket, with suffix**: `<suffix>` (e.g., `api-refactor`)
 
-## Harness Structure
-
-```
-../{current-harness-name}-harness-<IDENTIFIER>/
-├── WORKSPACE_SCOPE.md          # Generated harness documentation
-├── .gitmodules                 # Copied from parent harness
-├── service1/                   # Initialized with feature branch
-├── service2/                   # Initialized with feature branch
-├── other-service/              # Empty (not initialized)
-└── ...
-
-Where <IDENTIFIER> is either the ticket ID or suffix if no ticket is provided.
-```
 
 ## Usage Examples
 
@@ -73,9 +60,9 @@ Create harness for Jira-789 with change_type 'feat', suffix 'api-refactor', for 
 Create harness with suffix 'experiment' and rgl-node-sync-api service
 ```
 
-## Generated WORKSPACE_SCOPE.md
+## Generated HARNESS_SCOPE.md
 
-The skill automatically generates a WORKSPACE_SCOPE.md file containing:
+The skill automatically generates a HARNESS_SCOPE.md file containing:
 
 - Creation timestamp
 - List of active services
@@ -120,8 +107,8 @@ The skill executes `.claude/skills/create-harness/scripts/new-harness.sh` with t
 # Basic usage with ticket
 ./.claude/skills/create-harness/scripts/new-harness.sh Jira-123 service1 service2
 
-# With change type and suffix
-./.claude/skills/create-harness/scripts/new-harness.sh Jira-456 --change-type fix --suffix bug-fix service1
+# With change type and suffix and purpose
+./.claude/skills/create-harness/scripts/new-harness.sh Jira-456 --change-type fix --suffix bug-fix --purpose "Fix the bug for cache warm requests in the viewResource.ts controller file." service1 
 
 # Without ticket, using suffix as identifier
 ./.claude/skills/create-harness/scripts/new-harness.sh --suffix experiment service1 service2
@@ -153,5 +140,4 @@ Cleanup harness experiment
 
 1. `cd ../{current-harness-name}-harness-<IDENTIFIER>`
 2. Open in IDE (if available)
-3. Update WORKSPACE_SCOPE.md with feature details
-4. Begin development work
+3. Begin development work

@@ -249,11 +249,6 @@ cat >> HARNESS_SCOPE.md << EOF
 
 EOF
 
-# Add Jira link only if ticket is provided
-if [ -n "$TICKET" ]; then
-    echo "- Jira: https://radiantdelivers.atlassian.net/browse/${TICKET}" >> HARNESS_SCOPE.md
-fi
-
 cat >> HARNESS_SCOPE.md << EOF
 
 ## Notes
